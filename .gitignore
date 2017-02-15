@@ -97,5 +97,5 @@ webpack-stats.json
 *.sqlite3
 
 # Webpack
-staticfiles/static/webpack_bundles
+example/staticfiles/static/webpack_bundles
 django_redux/static/django_redux/lib
