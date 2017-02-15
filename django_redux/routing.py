@@ -1,5 +1,5 @@
 from channels.routing import route
-from myapp.consumers import ws_connect, ws_message, ws_disconnect
+from .consumers import ws_connect, ws_message, ws_disconnect
 
 
 channel_routing = [
