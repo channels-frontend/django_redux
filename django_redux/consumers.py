@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.utils import import_string
+from django.utils.module_loading import import_string
 from channels.auth import channel_session_user, channel_session_user_from_http
 
 

@@ -140,3 +140,5 @@ CHANNEL_LAYERS = {
         'ROUTING': 'django_redux.routing.channel_routing',
     },
 }
+
+REDUX_ENGINE = 'myproject.engine.Engine'
