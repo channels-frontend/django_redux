@@ -107,6 +107,11 @@ To send an action from channels::
         'payload': {'any': 'thing'},
     })
 
+TODO:
+
+* Tests
+* Demultiplexing streams
+
 Credits
 -------
 
