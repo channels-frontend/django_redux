@@ -110,7 +110,6 @@ To send an action from channels::
 TODO:
 
 * Tests
-* Demultiplexing streams
 * Docs
     * ``ReduxConsumer.get_control_channel`
     * Multiplexing
