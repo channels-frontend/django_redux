@@ -112,7 +112,7 @@ TODO:
 * Tests
 * Data binding
 * Docs
-    * ``ReduxConsumer.get_control_channel`
+    * ``ReduxConsumer.get_control_channel``
     * Multiplexing
 
 Credits
