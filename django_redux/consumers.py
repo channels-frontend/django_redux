@@ -1,11 +1,19 @@
-from channels.generic import websockets
+import inspect
 
-from .engine import registry
+from channels.generic import websockets
 
 
 class ReduxConsumer(websockets.JsonWebsocketConsumer):
 
     http_user = True
+
+    def _list_actions(self):
+        methods = inspect.getmembers(self, predicate=inspect.ismethod)
+        return [m[1] for m in methods if hasattr(m[1], 'action_type')]
+
+    def _get_actions(self, action_type):
+        methods = inspect.getmembers(self, predicate=inspect.ismethod)
+        return [m[1] for m in methods if hasattr(m[1], 'action_type') and m[1].action_type == action_type]
 
     def get_control_channel(self, user=None):
         # Current control channel name, unless told to return `user`'s
@@ -32,9 +40,9 @@ class ReduxConsumer(websockets.JsonWebsocketConsumer):
         # to client-side directives
         action_type = action['type'].upper()
 
-        methods = registry[action_type]
+        methods = self._get_actions(action_type)
 
         if not methods:
             raise NotImplementedError('{} not implemented'.format(action_type))
 
-        [method(self, action, multiplexer) for method in methods]
+        [method(action, multiplexer=multiplexer) for method in methods]

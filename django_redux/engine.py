@@ -1,4 +1,3 @@
-from collections import defaultdict
 import json
 
 from channels import Group
@@ -24,19 +23,8 @@ def send_action(group_name, action):
     Group(group_name).send(data)
 
 
-registry = defaultdict(list)
-
-
-def make_registrar():
-
-    def registrar(action_type):
-        def wrap(func):
-            registry[action_type].append(func)
-            return func
-        return wrap
-
-    registrar.all = registry
-    return registrar
-
-
-action = make_registrar()
+def action(action_type):
+    def wrap(func):
+        func.action_type = action_type
+        return func
+    return wrap
