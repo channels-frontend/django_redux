@@ -25,6 +25,8 @@ matrix:
     - python: "pypy3"
       env: DJANGO="Django>=1.10,<1.11"
 install:
+  - pip install -q -U pip
+  - pip install -q -r tests/REQUIREMENTS.txt
   - pip install -q $DJANGO
 script:
-  - PYTHONPATH=example python setup.py test
+  - PYTHONPATH=.:example py.test tests/

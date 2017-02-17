@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'channels',
-    'webpack_loader',
 
     'myapp',
 ]
@@ -133,9 +132,8 @@ LOGIN_REDIRECT_URL = '/'
 
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'asgi_redis.RedisChannelLayer',
+        'BACKEND': 'asgiref.inmemory.ChannelLayer',
         'CONFIG': {
-            'hosts': [('localhost', 6379)],
         },
         'ROUTING': 'tests.routing.channel_routing',
     },

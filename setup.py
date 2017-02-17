@@ -34,7 +34,6 @@ setup(
     ],
     setup_requires=[
         "mock",
-        "pytest",
         "pytest-runner",
         "pytest-django",
     ],

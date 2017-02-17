@@ -13,8 +13,8 @@ class ConsumerTest(ChannelTestCase):
         client = Client()
         with apply_routes([MyConsumer.as_route()]):
             spy.reset_mock()
-            client.send_and_consume('websocket.connect', {'path': '/'})
-            client.send_and_consume('websocket.receive', {
+            client.send_and_consume(u'websocket.connect', {'path': '/'})
+            client.send_and_consume(u'websocket.receive', {
                 'path': '/',
                 'text': json.dumps({
                     'type': 'INCREMENT_COUNTER',
@@ -34,8 +34,8 @@ class ConsumerTest(ChannelTestCase):
         client = Client()
         with apply_routes([Demultiplexer.as_route()]):
             spy.reset_mock()
-            client.send_and_consume('websocket.connect', {'path': '/'})
-            client.send_and_consume('websocket.receive', {
+            client.send_and_consume(u'websocket.connect', {'path': '/'})
+            client.send_and_consume(u'websocket.receive', {
                 'path': '/',
                 'text': json.dumps({
                     'stream': 'redux',
