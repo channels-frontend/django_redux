@@ -13,8 +13,8 @@ Quickstart
 
 Create a file called `engine.py` for your project::
 
-from django_redux.engine import action
-from django_redux.consumers import ReduxConsumer
+    from django_redux.engine import action
+    from django_redux.consumers import ReduxConsumer
 
 
     class MyConsumer(ReduxConsumer):
