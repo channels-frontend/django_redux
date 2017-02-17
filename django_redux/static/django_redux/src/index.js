@@ -1,14 +1,22 @@
 import ReconnectingWebSocket from 'reconnecting-websocket';
 
 
-const receiveSocketMessage = (store, action) => {
+const receiveSocketMessage = (store, msg) => {
   /* We cheat by using the Redux-style Actions as our
    * communication protocol with the server. This hack allows
    * the server to directly act as a Action Creator, which we
    * simply `dispatch()`.  Consider separating communication format
-   * from client-side action API.
+   * from client-side msg API.
    */
-  return store.dispatch(action);
+  let action;
+  if (_socket.stream !== undefined && _socket.stream === msg.stream) {
+    action = msg.payload;
+  } else {
+    action = msg;
+  }
+  if (action !== undefined) {
+    return store.dispatch(action);
+  }
 };
 
 const reconnect = (state) => {
@@ -19,17 +27,18 @@ const reconnect = (state) => {
 let _socket = null;
 
 export const WebsocketBridge = {
-  connect: () => {
+  connect: (stream) => {
     // Use wss:// if running on https://
     const scheme = window.location.protocol === 'https:' ? 'wss' : 'ws';
     const url = `${scheme}://${window.location.host}/ws`;
     _socket = new ReconnectingWebSocket(url);
+    _socket.stream = stream;
   },
 
-  listen: (store) => {
+  listen: (store, stream) => {
     _socket.onmessage = (event) => {
-      const action = JSON.parse(event.data);
-      receiveSocketMessage(store, action);
+      const msg = JSON.parse(event.data);
+      receiveSocketMessage(store, msg);
     };
 
     _socket.onopen = () => {
@@ -43,7 +52,16 @@ export const WebsocketBridge = {
   },
 
   send: (action) => {
-    _socket.send(JSON.stringify(action));
+    let msg;
+    if (_socket.stream) {
+      msg = {
+        stream: _socket.stream,
+        payload: action
+      }
+    } else {
+      msg = action;
+    }
+    _socket.send(JSON.stringify(msg));
   },
 };
 

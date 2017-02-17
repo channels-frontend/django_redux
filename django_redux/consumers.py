@@ -27,10 +27,7 @@ class ReduxConsumer(websockets.JsonWebsocketConsumer):
             groups.append(control)
         return groups
 
-    def connect(self, message, **kwargs):
-        pass
-
-    def receive(self, action, **kwargs):
+    def receive(self, action, multiplexer=None, **kwargs):
         # Simple protection to only expose upper case methods
         # to client-side directives
         action_type = action['type'].upper()
@@ -40,7 +37,4 @@ class ReduxConsumer(websockets.JsonWebsocketConsumer):
         if not methods:
             raise NotImplementedError('{} not implemented'.format(action_type))
 
-        [method(self, action) for method in methods]
-
-    def disconnect(self, message, **kwargs):
-        pass
+        [method(self, action, multiplexer) for method in methods]
