@@ -1,11 +1,7 @@
 from collections import defaultdict
 import json
 
-from django.contrib.auth import authenticate, login, get_user_model
 from channels import Group
-
-
-User = get_user_model()
 
 
 def send_action(group_name, action):
