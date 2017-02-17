@@ -110,6 +110,7 @@ To send an action from channels::
 TODO:
 
 * Tests
+* Data binding
 * Docs
     * ``ReduxConsumer.get_control_channel`
     * Multiplexing
