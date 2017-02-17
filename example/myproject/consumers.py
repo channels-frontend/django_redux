@@ -15,4 +15,4 @@ class MyConsumer(ReduxConsumer):
 
     @action('INCREMENT_COUNTER')
     def incr_counter(self, message):
-        self.group_send('broadcast', {'type': 'INCREMENTED_COUNTER', 'incrementBy': message['incrementBy']})
+        self.group_send('broadcast', {'type': 'INCREMENTED_COUNTER', 'incrementBy': message['payload']})
