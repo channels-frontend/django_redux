@@ -1,7 +1,7 @@
 Django Redux
 =============================
 
-Facilities to bridge the gap between Django and Redux.
+A re-usable bridge between Django channels and Redux.
 
 Quickstart
 ----------

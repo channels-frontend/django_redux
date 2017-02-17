@@ -11,7 +11,7 @@ f.close()
 setup(
     name='django_redux',
     version=VERSION,
-    description='',
+    description='A re-usable bridge between Django channels and Redux Edit',
     long_description=readme,
     author='',
     author_email='',
