@@ -17,7 +17,7 @@ setup(
     author_email='',
     url='',
     include_package_data=True,
-    packages=find_packages(exclude=['example']),
+    packages=find_packages(exclude=['example', 'tests']),
     zip_safe=False,
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -32,5 +32,10 @@ setup(
         "channels",
         "Django",
     ],
-    test_suite='runtests.runtests',
+    setup_requires=[
+        "mock",
+        "pytest",
+        "pytest-runner",
+        "pytest-django",
+    ],
 )
