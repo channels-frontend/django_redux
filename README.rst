@@ -66,7 +66,7 @@ In your js entry point::
     import reducer from '../reducers';
     import Root from '../containers/Root.react';
 
-    import { WebsocketBridge } from '../utils/WebsocketBridge';
+    import { WebsocketBridge } from 'django_redux';
 
     const store = createStore(
       reducer,
