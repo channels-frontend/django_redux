@@ -1,5 +1,4 @@
-from django_redux.engine import action
-from django_redux.consumers import ReduxConsumer
+from django_redux import action, ReduxConsumer
 
 
 class MyConsumer(ReduxConsumer):
@@ -14,5 +13,5 @@ class MyConsumer(ReduxConsumer):
             })
 
     @action('INCREMENT_COUNTER')
-    def incr_counter(self, message):
+    def incr_counter(self, message, **kwargs):
         self.group_send('broadcast', {'type': 'INCREMENTED_COUNTER', 'incrementBy': message['payload']})

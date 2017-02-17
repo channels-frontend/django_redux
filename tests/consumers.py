@@ -2,8 +2,7 @@ import mock
 
 from channels.generic.websockets import WebsocketDemultiplexer
 
-from django_redux.engine import action
-from django_redux.consumers import ReduxConsumer
+from django_redux import action, ReduxConsumer
 
 
 spy = mock.MagicMock()

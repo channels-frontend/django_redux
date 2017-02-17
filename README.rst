@@ -13,8 +13,7 @@ Quickstart
 
 Create a file called `engine.py` for your project::
 
-    from django_redux.engine import action
-    from django_redux.consumers import ReduxConsumer
+    from django_redux import action, ReduxConsumer
 
 
     class MyConsumer(ReduxConsumer):
@@ -110,6 +109,7 @@ To send an action from channels::
 TODO:
 
 * Tests
+    * ``send_action``
 * Data binding
 * Docs
     * ``ReduxConsumer.get_control_channel``
