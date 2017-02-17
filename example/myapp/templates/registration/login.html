@@ -1,0 +1,11 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <form action="" method="POST">{% csrf_token %}
+        {{ form }}
+        <input type="hidden" name="next" value="{{ next }}" />
+        <input type="submit" value="Log in" />
+    </form>
+  </body>
+</head>

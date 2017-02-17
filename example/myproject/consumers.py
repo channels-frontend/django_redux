@@ -1,18 +1,18 @@
-from channels.auth import channel_session_user, channel_session_user_from_http
-
-from .engine import Engine
-
-
-@channel_session_user_from_http
-def ws_connect(message):
-    Engine(message).connect()
+from django_redux.engine import action
+from django_redux.consumers import ReduxConsumer
 
 
-@channel_session_user
-def ws_message(message):
-    Engine.dispatch(message)
+class MyConsumer(ReduxConsumer):
 
+    def connect(self, message, **kwargs):
+        if message.user.is_authenticated():
+            self.send({
+                'type': 'SET_USER',
+                'user': {
+                    'username': self.message.user.username,
+                }
+            })
 
-@channel_session_user
-def ws_disconnect(message):
-    Engine(message).disconnect()
+    @action('INCREMENT_COUNTER')
+    def incr_counter(self, message):
+        self.group_send('broadcast', {'type': 'INCREMENTED_COUNTER', 'incrementBy': message['incrementBy']})

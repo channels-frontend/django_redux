@@ -1,7 +1,7 @@
 Django Redux
 =============================
 
-Minimalistic example app that uses Django Channels to dispatch and responds to React/Redux actions.
+Facilities to bridge the gap between Django and Redux.
 
 Quickstart
 ----------
@@ -13,14 +13,14 @@ Quickstart
 
 Create a file called `engine.py` for your project::
 
-    from django_redux.engine import ActionEngine, action
+from django_redux.engine import action
+from django_redux.consumers import ReduxConsumer
 
 
-    class Engine(ActionEngine):
+    class MyConsumer(ReduxConsumer):
 
-        def connect(self):
-            super().connect()
-            if self.message.user.is_authenticated():
+        def connect(self, message, **kwargs):
+            if message.user.is_authenticated():
                 self.send({
                     'type': 'SET_USER',
                     'user': {
@@ -32,7 +32,16 @@ Create a file called `engine.py` for your project::
         # fired from the JS via the WebsocketBridge (see below).
         @action('INCREMENT_COUNTER')
         def incr_counter(self, message):
-            self.send_to_group('broadcast', {'type': 'INCREMENTED_COUNTER', 'incrementBy': message['incrementBy']})
+            self.group_send('broadcast', {'type': 'INCREMENTED_COUNTER', 'incrementBy': message['incrementBy']})
+
+Create a file called `routing.py` for your project::
+
+    from channels.routing import route_class
+    from .consumers import MyConsumer
+
+    channel_routing = [
+        route_class(MyConsumer),
+    ]
 
 in your settings::
 
@@ -42,11 +51,9 @@ in your settings::
             'CONFIG': {
                 'hosts': [('localhost', 6379)],
             },
-            'ROUTING': 'django_redux.routing.channel_routing',
+            'ROUTING': 'myproject.routing.channel_routing',
         },
     }
-
-    REDUX_ENGINE = 'myproject.engine'
 
 In your js entry point::
 

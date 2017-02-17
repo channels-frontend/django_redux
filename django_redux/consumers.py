@@ -1,21 +1,46 @@
-from django.conf import settings
-from django.utils.module_loading import import_string
-from channels.auth import channel_session_user, channel_session_user_from_http
+from channels.generic import websockets
+
+from .engine import registry
 
 
-Engine = import_string(settings.REDUX_ENGINE)
+class ReduxConsumer(websockets.JsonWebsocketConsumer):
 
+    http_user = True
 
-@channel_session_user_from_http
-def ws_connect(message):
-    Engine(message).connect()
+    def get_control_channel(self, user=None):
+        # Current control channel name, unless told to return `user`'s
+        # control channel
+        if 'user' not in self.message.channel_session:
+            return None
+        if user is None:
+            user = self.message.channel_session['user']
+        return 'user.{0}'.format(user)
 
+    def connection_groups(self, **kwargs):
+        """
+        Called to return the list of groups to automatically add/remove
+        this connection to/from.
+        """
+        groups = ['broadcast']
+        control = self.get_control_channel()
+        if control is not None:
+            groups.append(control)
+        return groups
 
-@channel_session_user
-def ws_message(message):
-    Engine.dispatch(message)
+    def connect(self, message, **kwargs):
+        pass
 
+    def receive(self, action, **kwargs):
+        # Simple protection to only expose upper case methods
+        # to client-side directives
+        action_type = action['type'].upper()
 
-@channel_session_user
-def ws_disconnect(message):
-    Engine(message).disconnect()
+        methods = registry[action_type]
+
+        if not methods:
+            raise NotImplementedError('{} not implemented'.format(action_type))
+
+        [method(self, action) for method in methods]
+
+    def disconnect(self, message, **kwargs):
+        pass

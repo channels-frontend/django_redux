@@ -137,8 +137,6 @@ CHANNEL_LAYERS = {
         'CONFIG': {
             'hosts': [('localhost', 6379)],
         },
-        'ROUTING': 'django_redux.routing.channel_routing',
+        'ROUTING': 'myproject.routing.channel_routing',
     },
 }
-
-REDUX_ENGINE = 'myproject.engine.Engine'
