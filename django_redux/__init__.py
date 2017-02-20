@@ -1,4 +1,4 @@
-_version = "0.0.5"
+_version = "0.0.6"
 __version__ = VERSION = tuple(map(int, _version.split('.')))
 
 from .engine import action, send_action  # noqa
