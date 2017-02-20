@@ -1,68 +1,94 @@
 import ReconnectingWebSocket from 'reconnecting-websocket';
 
 
-const receiveSocketMessage = (store, msg) => {
-  /* We cheat by using the Redux-style Actions as our
-   * communication protocol with the server. This hack allows
-   * the server to directly act as a Action Creator, which we
-   * simply `dispatch()`.  Consider separating communication format
-   * from client-side msg API.
-   */
-  let action;
-  if (_socket.stream !== undefined && _socket.stream === msg.stream) {
-    action = msg.payload;
-  } else {
-    action = msg;
+const identity = (action, stream) => {
+  return action;
+}
+
+
+export class WebSocketBridge {
+  constructor() {
+    this._socket = null;
+    this.streams = {};
   }
-  if (action !== undefined) {
-    return store.dispatch(action);
+
+  connect(url) {
+    let _url;
+    if (url === undefined) {
+      // Use wss:// if running on https://
+      const scheme = window.location.protocol === 'https:' ? 'wss' : 'ws';
+      _url = `${scheme}://${window.location.host}/ws`;
+    } else {
+      _url = url;
+    }
+    this._socket = new ReconnectingWebSocket(_url);
   }
-};
 
-const reconnect = (state) => {
-  // add recovery logic here..
-};
+  reconnect(state) {
+    // add recovery logic here..
+  }
+
+  send(action) {
+    this._socket.send(JSON.stringify(action));
+  }
+
+  demultiplex(stream, transform = identity) {
+    this.streams[stream] = transform;
+  }
+  stream(stream) {
+    return {
+      send: (action) => {
+        const msg = {
+          stream,
+          payload: action
+        }
+        this._socket.send(JSON.stringify(msg));
+      }
+    }
+  }
+
+}
 
 
-let _socket = null;
-
-export const WebsocketBridge = {
-  connect: (stream) => {
-    // Use wss:// if running on https://
-    const scheme = window.location.protocol === 'https:' ? 'wss' : 'ws';
-    const url = `${scheme}://${window.location.host}/ws`;
-    _socket = new ReconnectingWebSocket(url);
-    _socket.stream = stream;
-  },
-
-  listen: (store, stream) => {
-    _socket.onmessage = (event) => {
+class ReduxBridge extends WebSocketBridge {
+  listen(store, transform = identity) {
+    this._socket.onmessage = (event) => {
       const msg = JSON.parse(event.data);
-      receiveSocketMessage(store, msg);
+      let action;
+      let stream;
+      if (msg.stream !== undefined && this.streams[msg.stream] !== undefined) {
+        action = msg.payload;
+        stream = msg.stream;
+        transform = this.streams[stream];
+      } else {
+        action = msg;
+        stream = null;
+      }
+      this.receiveSocketMessage(store, action, stream, transform);
     };
 
-    _socket.onopen = () => {
+    this._socket.onopen = () => {
       const state = store.getState();
 
       if (state.currentUser !== null) {
         // the connection was dropped. Call the recovery logic
-        reconnect(state);
+        this.reconnect(state);
       }
     };
-  },
 
-  send: (action) => {
-    let msg;
-    if (_socket.stream) {
-      msg = {
-        stream: _socket.stream,
-        payload: action
-      }
-    } else {
-      msg = action;
-    }
-    _socket.send(JSON.stringify(msg));
-  },
-};
+  }
 
-export default WebsocketBridge;
+  receiveSocketMessage(store, action, stream, transform) {
+    /* We cheat by using the Redux-style Actions as our
+     * communication protocol with the server. This hack allows
+     * the server to directly act as a Action Creator, which we
+     * simply `dispatch()`.  Consider separating communication format
+     * from client-side msg API.
+     */
+    return store.dispatch(transform(action));
+  }
+
+}
+
+export const reduxBridge = new ReduxBridge()
+export default reduxBridge;

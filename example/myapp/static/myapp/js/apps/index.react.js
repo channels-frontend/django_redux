@@ -9,7 +9,7 @@ import createLogger from 'redux-logger';
 import reducer from '../reducers';
 import Root from '../containers/Root.react';
 
-import { WebsocketBridge } from 'django_redux';
+import { reduxBridge } from 'django_redux';
 
 const loggerMiddleware = createLogger();
 
@@ -22,8 +22,8 @@ const store = createStore(
 );
 
 
-WebsocketBridge.connect();
-WebsocketBridge.listen(store);
+reduxBridge.connect();
+reduxBridge.listen(store);
 
 render(
   <Provider store={store}>

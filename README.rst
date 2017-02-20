@@ -28,7 +28,7 @@ Create a file called `engine.py` for your project::
                 })
 
         # This method will be called when the `INCREMENT_COUNTER` action gets
-        # fired from the JS via the WebsocketBridge (see below).
+        # fired from the JS via the reduxBridge (see below).
         @action('INCREMENT_COUNTER')
         def incr_counter(self, message):
             self.group_send('broadcast', {'type': 'INCREMENTED_COUNTER', 'incrementBy': message['incrementBy']})
@@ -65,15 +65,15 @@ In your js entry point::
     import reducer from '../reducers';
     import Root from '../containers/Root.react';
 
-    import { WebsocketBridge } from 'django_redux';
+    import { reduxBridge } from 'django_redux';
 
     const store = createStore(
       reducer,
     );
 
 
-    WebsocketBridge.connect();
-    WebsocketBridge.listen(store);
+    reduxBridge.connect();
+    reduxBridge.listen(store);
 
     render(
       <Provider store={store}>
@@ -87,11 +87,11 @@ To send an action from redux::
     import { createAction } from 'redux-actions';
 
     import ActionTypes from './constants';
-    import { WebsocketBridge } from 'django_redux';
+    import { reduxBridge } from 'django_redux';
 
 
     export const incrementCounter = createAction(ActionTypes.INCREMENT_COUNTER, (incrementBy) => {
-      WebsocketBridge.send({
+      reduxBridge.send({
         type: ActionTypes.INCREMENT_COUNTER,
         incrementBy
       });
