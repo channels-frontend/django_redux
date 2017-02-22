@@ -18,7 +18,7 @@ export class WebSocketBridge {
     this._socket = null;
     this.streams = {};
     this.default_cb = null;
-    this.options = Objec.assign({}, {
+    this.options = Object.assign({}, {
       onopen: noop,
     }, options);
   }
