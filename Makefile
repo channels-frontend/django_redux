@@ -5,4 +5,4 @@ release:
 	cd django_redux/static/django_redux && npm publish && npm run docs &&
 
 update_docs:
-	cd django_redux/static/django_redux && npm run docs && git add docs && git commit -m 'Update docs' && git push
+	cd django_redux/static/django_redux && npm run docs
