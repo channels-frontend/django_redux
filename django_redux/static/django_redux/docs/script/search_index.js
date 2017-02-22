@@ -360,6 +360,12 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "src/index.js~reduxbridge#listen",
+    "class/src/index.js~ReduxBridge.html#instance-method-listen",
+    "src/index.js~ReduxBridge#listen",
+    "method"
+  ],
+  [
     "src/index.js~websocketbridge#connect",
     "class/src/index.js~WebSocketBridge.html#instance-method-connect",
     "src/index.js~WebSocketBridge#connect",

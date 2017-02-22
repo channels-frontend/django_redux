@@ -215,6 +215,19 @@ class ReduxBridge extends WebSocketBridge {
     super(options);
   }
 
+  /**
+   * Starts listening for messages on the websocket, demultiplexing if necessary.
+   *
+   * @param      {Object}  store         Your redux store.
+   * @param      {Function}  [cb]         Callback to be execute when a message
+   * arrives. The callback will receive `store`, `action` and `stream` parameters.
+   * By default it will call `store.dispatch(action)`;
+   *
+   * @example
+   * const webSocketBridge = new WebSocketBridge();
+   * webSocketBridge.connect();
+   * webSocketBridge.listen(store);
+   */
   listen(store, cb = this.storeDispatch) {
     this.default_cb = cb;
     this._socket.onmessage = (event) =&gt; {
