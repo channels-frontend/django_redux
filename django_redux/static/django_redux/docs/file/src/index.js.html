@@ -1,7 +1,50 @@
-import ReconnectingWebSocket from 'reconnecting-websocket';
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">src/index.js | django_redux API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~ReduxBridge.html">ReduxBridge</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~WebSocketBridge.html">WebSocketBridge</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-reduxBridge">reduxBridge</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-webSocketBridge">webSocketBridge</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/index.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import ReconnectingWebSocket from &apos;reconnecting-websocket&apos;;
 
 
-const noop = (...args) => {};
+const noop = (...args) =&gt; {};
 
 /**
  * Bridge between Channels and plain javascript.
@@ -36,7 +79,7 @@ export class WebSocketBridge {
     let _url;
     if (url === undefined) {
       // Use wss:// if running on https://
-      const scheme = window.location.protocol === 'https:' ? 'wss' : 'ws';
+      const scheme = window.location.protocol === &apos;https:&apos; ? &apos;wss&apos; : &apos;ws&apos;;
       _url = `${scheme}://${window.location.host}/ws`;
     } else {
       _url = url;
@@ -59,11 +102,11 @@ export class WebSocketBridge {
    */
   listen(cb) {
     this.default_cb = cb;
-    this._socket.onmessage = (event) => {
+    this._socket.onmessage = (event) =&gt; {
       const msg = JSON.parse(event.data);
       let action;
       let stream;
-      if (msg.stream !== undefined && this.streams[msg.stream] !== undefined) {
+      if (msg.stream !== undefined &amp;&amp; this.streams[msg.stream] !== undefined) {
         action = msg.payload;
         stream = msg.stream;
         const stream_cb = this.streams[stream];
@@ -79,7 +122,7 @@ export class WebSocketBridge {
   }
 
   /**
-   * Adds a 'stream handler' callback. Messages coming from the specified stream
+   * Adds a &apos;stream handler&apos; callback. Messages coming from the specified stream
    * will call the specified callback.
    *
    * @param      {String}    stream  The stream name
@@ -90,10 +133,10 @@ export class WebSocketBridge {
    * const webSocketBridge = new WebSocketBridge();
    * webSocketBridge.connect();
    * webSocketBridge.listen();
-   * webSocketBridge.demultiplex('mystream', function(action, stream) {
+   * webSocketBridge.demultiplex(&apos;mystream&apos;, function(action, stream) {
    *   console.log(action, stream);
    * });
-   * webSocketBridge.demultiplex('myotherstream', function(action, stream) {
+   * webSocketBridge.demultiplex(&apos;myotherstream&apos;, function(action, stream) {
    *   console.info(action, stream);
    * });
    */
@@ -110,7 +153,7 @@ export class WebSocketBridge {
    * // We cheat by using the Redux-style Actions as our
    * // communication protocol with the server. Consider separating
    * // communication format from client-side action API.
-   * webSocketBridge.send({type: 'MYACTION', 'payload': 'somepayload'});
+   * webSocketBridge.send({type: &apos;MYACTION&apos;, &apos;payload&apos;: &apos;somepayload&apos;});
    */
   send(msg) {
     this._socket.send(JSON.stringify(msg));
@@ -125,11 +168,11 @@ export class WebSocketBridge {
    * // We cheat by using the Redux-style Actions as our
    * // communication protocol with the server. Consider separating
    * // communication format from client-side action API.
-   * webSocketBridge.stream('mystream').send({type: 'MYACTION', 'payload': 'somepayload'})
+   * webSocketBridge.stream(&apos;mystream&apos;).send({type: &apos;MYACTION&apos;, &apos;payload&apos;: &apos;somepayload&apos;})
    */
   stream(stream) {
     return {
-      send: (action) => {
+      send: (action) =&gt; {
         const msg = {
           stream,
           payload: action
@@ -144,7 +187,7 @@ export class WebSocketBridge {
 /**
  * Convenience singleton for `WebSocketBridge`.
  * @example
- * import { webSocketBridge } from 'django_redux';
+ * import { webSocketBridge } from &apos;django_redux&apos;;
  *
  * webSocketBridge.connect();
  * webSocketBridge.listen(function(action, stream) { console.log(action) });
@@ -172,11 +215,11 @@ class ReduxBridge extends WebSocketBridge {
 
   listen(store, cb = this.storeDispatch) {
     this.default_cb = cb;
-    this._socket.onmessage = (event) => {
+    this._socket.onmessage = (event) =&gt; {
       const msg = JSON.parse(event.data);
       let action;
       let stream;
-      if (msg.stream !== undefined && this.streams[msg.stream] !== undefined) {
+      if (msg.stream !== undefined &amp;&amp; this.streams[msg.stream] !== undefined) {
         action = msg.payload;
         stream = msg.stream;
         const stream_cb = this.streams[stream];
@@ -188,7 +231,7 @@ class ReduxBridge extends WebSocketBridge {
       }
     };
 
-    this._socket.onopen = () => {
+    this._socket.onopen = () =&gt; {
       const state = store.getState();
 
       if (state.currentUser !== null) {
@@ -208,7 +251,7 @@ class ReduxBridge extends WebSocketBridge {
 /**
  * Convenience singleton for `ReduxSocketBridge`.
  * @example
- * import { ReduxBridge } from 'django_redux';
+ * import { ReduxBridge } from &apos;django_redux&apos;;
  *
  * ReduxBridge.connect();
  * ReduxBridge.listen(store);
@@ -216,3 +259,20 @@ class ReduxBridge extends WebSocketBridge {
  * @type       {ReduxSocketBridge}
  */
 export const reduxBridge = new ReduxBridge()
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
