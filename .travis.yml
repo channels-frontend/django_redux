@@ -24,5 +24,7 @@ install:
   - pip install -q -U pip
   - pip install -q -r tests/REQUIREMENTS.txt
   - pip install -q $DJANGO
+  - nvm install 7
 script:
   - PYTHONPATH=.:example py.test tests/
+  - cd django_redux/static/django_redux && npm install --progress=false && npm test

@@ -65,7 +65,8 @@ export class WebSocketBridge {
       const msg = JSON.parse(event.data);
       let action;
       let stream;
-      if (msg.stream !== undefined && this.streams[msg.stream] !== undefined) {
+
+      if (msg.stream !== undefined) {
         action = msg.payload;
         stream = msg.stream;
         const stream_cb = this.streams[stream];
