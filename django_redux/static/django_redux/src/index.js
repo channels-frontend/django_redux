@@ -28,11 +28,13 @@ export class WebSocketBridge {
    *
    * @param      {String}  [url]     The url of the websocket. Defaults to
    * `window.location.host`
+   * @param      {String[]|String}  [protocols] Optional string or array of protocols.
+   * @param      {Object} options Object of options for [`reconnecting-websocket`](https://github.com/joewalnes/reconnecting-websocket#options-1).
    * @example
    * const webSocketBridge = new WebSocketBridge();
    * webSocketBridge.connect();
    */
-  connect(url) {
+  connect(url, protocols, options) {
     let _url;
     if (url === undefined) {
       // Use wss:// if running on https://
@@ -41,7 +43,7 @@ export class WebSocketBridge {
     } else {
       _url = url;
     }
-    this._socket = new ReconnectingWebSocket(_url);
+    this._socket = new ReconnectingWebSocket(_url, protocols, options);
   }
 
   /**
