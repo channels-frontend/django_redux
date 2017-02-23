@@ -98,4 +98,4 @@ webpack-stats.json
 
 # Webpack
 example/staticfiles/static/webpack_bundles
-django_redux/static/django_redux/lib
+node/lib

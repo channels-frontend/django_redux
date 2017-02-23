@@ -27,4 +27,4 @@ install:
   - nvm install 7
 script:
   - PYTHONPATH=.:example py.test tests/
-  - cd django_redux/static/django_redux && npm install --progress=false && npm test
+  - cd node && npm install --progress=false && npm test
