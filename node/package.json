@@ -7,6 +7,7 @@
     "compile": "rm -rf lib && babel src --out-dir lib",
     "docs": "rm -rf docs && esdoc -c esdoc.json",
     "test": "jest",
+    "browserify": "browserify src/index.js -s channels -o ../django_redux/static/django_redux/js/websocketbridge.js",
     "prepublish": "npm run compile"
   },
   "files": [
@@ -20,6 +21,16 @@
   "jest": {
     "roots": [
       "tests"
+    ]
+  },
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "sourceMapRelative": "$PWD/src"
+        }
+      ]
     ]
   },
   "devDependencies": {
@@ -36,6 +47,8 @@
     "babel-preset-stage-0": "^6.16.0",
     "babel-register": "^6.9.0",
     "babel-runtime": "^6.11.6",
+    "babelify": "^7.3.0",
+    "browserify": "^14.1.0",
     "esdoc": "^0.5.2",
     "esdoc-es7-plugin": "0.0.3",
     "esdoc-importpath-plugin": "^0.1.1",

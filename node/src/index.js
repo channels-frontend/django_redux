@@ -231,4 +231,4 @@ class ReduxBridge extends WebSocketBridge {
  *
  * @type       {ReduxSocketBridge}
  */
-export const reduxBridge = new ReduxBridge()
+export const reduxBridge = new ReduxBridge();
