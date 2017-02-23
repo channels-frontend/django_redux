@@ -4,11 +4,12 @@
   "description": "",
   "main": "lib/index.js",
   "scripts": {
-    "compile": "rm -rf lib && babel src --out-dir lib",
+    "transpile": "rm -rf lib && babel src --out-dir lib",
     "docs": "rm -rf docs && esdoc -c esdoc.json",
     "test": "jest",
     "browserify": "browserify src/index.js -s channels -o ../django_redux/static/django_redux/js/websocketbridge.js",
-    "prepublish": "npm run compile"
+    "prepublish": "npm run transpile",
+    "compile": "npm run transpile && npm run browserify"
   },
   "files": [
     "lib/index.js"
