@@ -108,7 +108,8 @@ export class WebSocketBridge {
       const msg = JSON.parse(event.data);
       let action;
       let stream;
-      if (msg.stream !== undefined &amp;&amp; this.streams[msg.stream] !== undefined) {
+
+      if (msg.stream !== undefined) {
         action = msg.payload;
         stream = msg.stream;
         const stream_cb = this.streams[stream];
@@ -152,10 +153,7 @@ export class WebSocketBridge {
    * @param      {Object}  msg     The message
    *
    * @example
-   * // We cheat by using the Redux-style Actions as our
-   * // communication protocol with the server. Consider separating
-   * // communication format from client-side action API.
-   * webSocketBridge.send({type: &apos;MYACTION&apos;, &apos;payload&apos;: &apos;somepayload&apos;});
+   * webSocketBridge.send({prop1: &apos;value1&apos;, prop2: &apos;value1&apos;});
    */
   send(msg) {
     this._socket.send(JSON.stringify(msg));
@@ -167,10 +165,7 @@ export class WebSocketBridge {
    * @param      {String}  stream  The stream name
    * @return     {Object}  convenience object to send messages to `stream`.
    * @example
-   * // We cheat by using the Redux-style Actions as our
-   * // communication protocol with the server. Consider separating
-   * // communication format from client-side action API.
-   * webSocketBridge.stream(&apos;mystream&apos;).send({type: &apos;MYACTION&apos;, &apos;payload&apos;: &apos;somepayload&apos;})
+   * webSocketBridge.stream(&apos;mystream&apos;).send({prop1: &apos;value1&apos;, prop2: &apos;value1&apos;})
    */
   stream(stream) {
     return {
@@ -273,7 +268,7 @@ class ReduxBridge extends WebSocketBridge {
  *
  * @type       {ReduxSocketBridge}
  */
-export const reduxBridge = new ReduxBridge()
+export const reduxBridge = new ReduxBridge();
 </code></pre>
 
 </div>

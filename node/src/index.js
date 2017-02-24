@@ -110,10 +110,7 @@ export class WebSocketBridge {
    * @param      {Object}  msg     The message
    *
    * @example
-   * // We cheat by using the Redux-style Actions as our
-   * // communication protocol with the server. Consider separating
-   * // communication format from client-side action API.
-   * webSocketBridge.send({type: 'MYACTION', 'payload': 'somepayload'});
+   * webSocketBridge.send({prop1: 'value1', prop2: 'value1'});
    */
   send(msg) {
     this._socket.send(JSON.stringify(msg));
@@ -125,10 +122,7 @@ export class WebSocketBridge {
    * @param      {String}  stream  The stream name
    * @return     {Object}  convenience object to send messages to `stream`.
    * @example
-   * // We cheat by using the Redux-style Actions as our
-   * // communication protocol with the server. Consider separating
-   * // communication format from client-side action API.
-   * webSocketBridge.stream('mystream').send({type: 'MYACTION', 'payload': 'somepayload'})
+   * webSocketBridge.stream('mystream').send({prop1: 'value1', prop2: 'value1'})
    */
   stream(stream) {
     return {

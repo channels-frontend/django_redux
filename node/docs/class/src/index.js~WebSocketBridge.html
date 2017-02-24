@@ -347,7 +347,7 @@ webSocketBridge.connect();</code></pre>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber102">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber103">source</a></span></span>
     </span>
   </h3>
 
@@ -505,7 +505,7 @@ webSocketBridge.listen(function(action, stream) {
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber117">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber115">source</a></span></span>
     </span>
   </h3>
 
@@ -552,10 +552,7 @@ webSocketBridge.listen(function(action, stream) {
     
   <div class="example-doc" data-ice="exampleDoc">
       
-      <pre class="prettyprint source-code"><code data-ice="exampleCode">// We cheat by using the Redux-style Actions as our
-// communication protocol with the server. Consider separating
-// communication format from client-side action API.
-webSocketBridge.send({type: &apos;MYACTION&apos;, &apos;payload&apos;: &apos;somepayload&apos;});</code></pre>
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">webSocketBridge.send({prop1: &apos;value1&apos;, prop2: &apos;value1&apos;});</code></pre>
     </div>
 </div>
 
@@ -576,7 +573,7 @@ webSocketBridge.send({type: &apos;MYACTION&apos;, &apos;payload&apos;: &apos;som
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber132">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber127">source</a></span></span>
     </span>
   </h3>
 
@@ -636,10 +633,7 @@ webSocketBridge.send({type: &apos;MYACTION&apos;, &apos;payload&apos;: &apos;som
     
   <div class="example-doc" data-ice="exampleDoc">
       
-      <pre class="prettyprint source-code"><code data-ice="exampleCode">// We cheat by using the Redux-style Actions as our
-// communication protocol with the server. Consider separating
-// communication format from client-side action API.
-webSocketBridge.stream(&apos;mystream&apos;).send({type: &apos;MYACTION&apos;, &apos;payload&apos;: &apos;somepayload&apos;})</code></pre>
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">webSocketBridge.stream(&apos;mystream&apos;).send({prop1: &apos;value1&apos;, prop2: &apos;value1&apos;})</code></pre>
     </div>
 </div>
 

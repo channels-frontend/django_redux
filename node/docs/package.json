@@ -4,9 +4,12 @@
   "description": "",
   "main": "lib/index.js",
   "scripts": {
-    "compile": "rm -rf lib && babel src --out-dir lib",
+    "transpile": "rm -rf lib && babel src --out-dir lib",
     "docs": "rm -rf docs && esdoc -c esdoc.json",
-    "prepublish": "npm run compile"
+    "test": "jest",
+    "browserify": "browserify src/index.js -s channels -o ../django_redux/static/django_redux/js/websocketbridge.js",
+    "prepublish": "npm run transpile",
+    "compile": "npm run transpile && npm run browserify"
   },
   "files": [
     "lib/index.js"
@@ -15,6 +18,21 @@
   "license": "MIT",
   "dependencies": {
     "reconnecting-websocket": "^3.0.3"
+  },
+  "jest": {
+    "roots": [
+      "tests"
+    ]
+  },
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "sourceMapRelative": "$PWD/src"
+        }
+      ]
+    ]
   },
   "devDependencies": {
     "babel": "^6.5.2",
@@ -30,7 +48,8 @@
     "babel-preset-stage-0": "^6.16.0",
     "babel-register": "^6.9.0",
     "babel-runtime": "^6.11.6",
-    "bufferutil": "^1.2.1",
+    "babelify": "^7.3.0",
+    "browserify": "^14.1.0",
     "esdoc": "^0.5.2",
     "esdoc-es7-plugin": "0.0.3",
     "esdoc-importpath-plugin": "^0.1.1",
@@ -41,10 +60,10 @@
     "eslint-plugin-jsx-a11y": "^1.5.3",
     "eslint-plugin-react": "^5.2.2",
     "html-loader": "^0.4.3",
-    "jquery": "^3.1.1",
+    "jest": "^19.0.1",
     "json-loader": "^0.5.4",
-    "keymirror": "^0.1.1",
     "markdown-loader": "^0.1.7",
+    "mock-socket": "^6.0.4",
     "react": "^15.4.0",
     "react-cookie": "^0.4.8",
     "react-dom": "^15.4.0",
@@ -53,9 +72,7 @@
     "redux-actions": "^1.0.0",
     "redux-logger": "^2.7.4",
     "redux-thunk": "^2.1.0",
-    "utf-8-validate": "^1.2.1",
-    "webpack": "^1.13.3",
-    "webpack-bundle-tracker": "0.0.93",
-    "ws": "^1.1.1"
+    "webpack": "^2.2.1",
+    "webpack-bundle-tracker": "0.0.93"
   }
 }
