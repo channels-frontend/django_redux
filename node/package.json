@@ -73,6 +73,6 @@
     "redux-logger": "^2.7.4",
     "redux-thunk": "^2.1.0",
     "webpack": "^2.2.1",
-    "webpack-bundle-tracker": "0.0.103"
+    "webpack-bundle-tracker": "0.0.93"
   }
 }
