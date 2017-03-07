@@ -32,16 +32,37 @@
 <nav class="navigation" data-ice="nav"><div>
   <ul>
     
-  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~ReduxBridge.html">ReduxBridge</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~WebSocketBridge.html">WebSocketBridge</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-reduxBridge">reduxBridge</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-webSocketBridge">webSocketBridge</a></span></span></li>
+  <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-reduxBridge">reduxBridge</a></span></span></li>
 </ul>
 </div>
 </nav>
 
-<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><p>See the <a href="https://github.com/fcurella/django_redux">Github Repo</a></p>
-</div>
+<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h3 id="usage">Usage</h3>
+<p>Channels Javascript wrapper for Redux.</p>
+<p>To process messages:</p>
+<pre><code><code class="source-code prettyprint">import { ReduxBridge } from &apos;django_redux&apos;;
+import { store } from &apos;./mystore&apos;;
+
+const reduxBridge = new ReduxBridge();
+reduxBridge.connect();
+reduxBridge.listen(store);</code>
+</code></pre><p>To send messages:</p>
+<pre><code><code class="source-code prettyprint">reduxBridge.send({prop1: &apos;value1&apos;, prop2: &apos;value1&apos;});</code>
+</code></pre><p>To demultiplex specific streams:</p>
+<pre><code><code class="source-code prettyprint">const reduxBridge = new ReduxBridge();
+reduxBridge.connect();
+reduxBridge.listen(store);
+reduxBridge.demultiplex(&apos;mystream&apos;, function(store, action, stream) {
+  console.log(action, stream);
+  store.dispatch(action);
+});
+reduxBridge.demultiplex(&apos;myotherstream&apos;, function(store, action, stream) {
+  console.info(action, stream);
+  store.dispatch(action);
+});</code>
+</code></pre><p>To send a message to a specific stream:</p>
+<pre><code><code class="source-code prettyprint">reduxBridge.stream(&apos;mystream&apos;).send({prop1: &apos;value1&apos;, prop2: &apos;value1&apos;})</code>
+</code></pre></div>
 </div>
 
 <footer class="footer">

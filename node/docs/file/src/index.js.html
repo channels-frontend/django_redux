@@ -32,177 +32,18 @@
 <nav class="navigation" data-ice="nav"><div>
   <ul>
     
-  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~ReduxBridge.html">ReduxBridge</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~WebSocketBridge.html">WebSocketBridge</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-reduxBridge">reduxBridge</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-webSocketBridge">webSocketBridge</a></span></span></li>
+  <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-reduxBridge">reduxBridge</a></span></span></li>
 </ul>
 </div>
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/index.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import ReconnectingWebSocket from &apos;reconnecting-websocket&apos;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { WebSocketBridge } from &apos;django-channels&apos;;
 
 
 const noop = (...args) =&gt; {};
 
-/**
- * Bridge between Channels and plain javascript.
- *
- * @example
- * const webSocketBridge = new WebSocketBridge();
- * webSocketBridge.connect();
- * webSocketBridge.listen(function(action, stream) {
- *   console.log(action, stream);
- * });
- */
-export class WebSocketBridge {
-  constructor(options) {
-    this._socket = null;
-    this.streams = {};
-    this.default_cb = null;
-    this.options = Object.assign({}, {
-      onopen: noop,
-    }, options);
-  }
-
-  /**
-   * Connect to the websocket server
-   *
-   * @param      {String}  [url]     The url of the websocket. Defaults to
-   * `window.location.host`
-   * @param      {String[]|String}  [protocols] Optional string or array of protocols.
-   * @param      {Object} options Object of options for [`reconnecting-websocket`](https://github.com/joewalnes/reconnecting-websocket#options-1).
-   * @example
-   * const webSocketBridge = new WebSocketBridge();
-   * webSocketBridge.connect();
-   */
-  connect(url, protocols, options) {
-    let _url;
-    if (url === undefined) {
-      // Use wss:// if running on https://
-      const scheme = window.location.protocol === &apos;https:&apos; ? &apos;wss&apos; : &apos;ws&apos;;
-      _url = `${scheme}://${window.location.host}/ws`;
-    } else {
-      _url = url;
-    }
-    this._socket = new ReconnectingWebSocket(_url, protocols, options);
-  }
-
-  /**
-   * Starts listening for messages on the websocket, demultiplexing if necessary.
-   *
-   * @param      {Function}  [cb]         Callback to be execute when a message
-   * arrives. The callback will receive `action` and `stream` parameters
-   *
-   * @example
-   * const webSocketBridge = new WebSocketBridge();
-   * webSocketBridge.connect();
-   * webSocketBridge.listen(function(action, stream) {
-   *   console.log(action, stream);
-   * });
-   */
-  listen(cb) {
-    this.default_cb = cb;
-    this._socket.onmessage = (event) =&gt; {
-      const msg = JSON.parse(event.data);
-      let action;
-      let stream;
-
-      if (msg.stream !== undefined) {
-        action = msg.payload;
-        stream = msg.stream;
-        const stream_cb = this.streams[stream];
-        stream_cb ? stream_cb(action, stream) : null;
-      } else {
-        action = msg;
-        stream = null;
-        this.default_cb ? this.default_cb(action, stream) : null;
-      }
-    };
-
-    this._socket.onopen = this.options.onopen;
-  }
-
-  /**
-   * Adds a &apos;stream handler&apos; callback. Messages coming from the specified stream
-   * will call the specified callback.
-   *
-   * @param      {String}    stream  The stream name
-   * @param      {Function}  cb      Callback to be execute when a message
-   * arrives. The callback will receive `action` and `stream` parameters.
-
-   * @example
-   * const webSocketBridge = new WebSocketBridge();
-   * webSocketBridge.connect();
-   * webSocketBridge.listen();
-   * webSocketBridge.demultiplex(&apos;mystream&apos;, function(action, stream) {
-   *   console.log(action, stream);
-   * });
-   * webSocketBridge.demultiplex(&apos;myotherstream&apos;, function(action, stream) {
-   *   console.info(action, stream);
-   * });
-   */
-  demultiplex(stream, cb) {
-    this.streams[stream] = cb;
-  }
-
-  /**
-   * Sends a message to the reply channel.
-   *
-   * @param      {Object}  msg     The message
-   *
-   * @example
-   * webSocketBridge.send({prop1: &apos;value1&apos;, prop2: &apos;value1&apos;});
-   */
-  send(msg) {
-    this._socket.send(JSON.stringify(msg));
-  }
-
-  /**
-   * Returns an object to send messages to a specific stream
-   *
-   * @param      {String}  stream  The stream name
-   * @return     {Object}  convenience object to send messages to `stream`.
-   * @example
-   * webSocketBridge.stream(&apos;mystream&apos;).send({prop1: &apos;value1&apos;, prop2: &apos;value1&apos;})
-   */
-  stream(stream) {
-    return {
-      send: (action) =&gt; {
-        const msg = {
-          stream,
-          payload: action
-        }
-        this._socket.send(JSON.stringify(msg));
-      }
-    }
-  }
-
-}
-
-/**
- * Convenience singleton for `WebSocketBridge`.
- * @example
- * import { webSocketBridge } from &apos;django_redux&apos;;
- *
- * webSocketBridge.connect();
- * webSocketBridge.listen(function(action, stream) { console.log(action) });
- *
- * @type       {WebSocketBridge}
- */
-export const webSocketBridge = new WebSocketBridge()
-
-/**
- * Bridge between Channels and Redux.
- * By default dispatches actions received from channels to the redux store.
- *
- * @example
- * const reduxBridge = new ReduxBridge();
- * reduxBridge.connect();
- * reduxBridge.listen(store);
- */
-class ReduxBridge extends WebSocketBridge {
+export class ReduxBridge extends WebSocketBridge {
   constructor(options) {
     options = Object.assign({}, {
       onreconnect: noop,
@@ -229,15 +70,15 @@ class ReduxBridge extends WebSocketBridge {
       const msg = JSON.parse(event.data);
       let action;
       let stream;
-      if (msg.stream !== undefined &amp;&amp; this.streams[msg.stream] !== undefined) {
+      if (msg.stream !== undefined) {
         action = msg.payload;
         stream = msg.stream;
         const stream_cb = this.streams[stream];
-        stream_cb(store, action, stream)
+        stream_cb ? stream_cb(store, action, stream) : null;
       } else {
         action = msg;
         stream = null;
-        this.default_cb(store, action, stream);
+        this.default_cb ? this.default_cb(store, action, stream) : null;
       }
     };
 

@@ -1,26 +1,8 @@
 window.esdocSearchIndex = [
   [
     "django_redux/lib/index~reduxbridge",
-    "class/src/index.js~ReduxBridge.html",
-    "<span>ReduxBridge</span> <span class=\"search-result-import-path\">django_redux/lib/index</span>",
-    "class"
-  ],
-  [
-    "django_redux/lib/index~websocketbridge",
-    "class/src/index.js~WebSocketBridge.html",
-    "<span>WebSocketBridge</span> <span class=\"search-result-import-path\">django_redux/lib/index</span>",
-    "class"
-  ],
-  [
-    "django_redux/lib/index~reduxbridge",
     "variable/index.html#static-variable-reduxBridge",
     "<span>reduxBridge</span> <span class=\"search-result-import-path\">django_redux/lib/index</span>",
-    "variable"
-  ],
-  [
-    "django_redux/lib/index~websocketbridge",
-    "variable/index.html#static-variable-webSocketBridge",
-    "<span>webSocketBridge</span> <span class=\"search-result-import-path\">django_redux/lib/index</span>",
     "variable"
   ],
   [
@@ -358,41 +340,5 @@ window.esdocSearchIndex = [
     "file/src/index.js.html",
     "src/index.js",
     "file"
-  ],
-  [
-    "src/index.js~reduxbridge#listen",
-    "class/src/index.js~ReduxBridge.html#instance-method-listen",
-    "src/index.js~ReduxBridge#listen",
-    "method"
-  ],
-  [
-    "src/index.js~websocketbridge#connect",
-    "class/src/index.js~WebSocketBridge.html#instance-method-connect",
-    "src/index.js~WebSocketBridge#connect",
-    "method"
-  ],
-  [
-    "src/index.js~websocketbridge#demultiplex",
-    "class/src/index.js~WebSocketBridge.html#instance-method-demultiplex",
-    "src/index.js~WebSocketBridge#demultiplex",
-    "method"
-  ],
-  [
-    "src/index.js~websocketbridge#listen",
-    "class/src/index.js~WebSocketBridge.html#instance-method-listen",
-    "src/index.js~WebSocketBridge#listen",
-    "method"
-  ],
-  [
-    "src/index.js~websocketbridge#send",
-    "class/src/index.js~WebSocketBridge.html#instance-method-send",
-    "src/index.js~WebSocketBridge#send",
-    "method"
-  ],
-  [
-    "src/index.js~websocketbridge#stream",
-    "class/src/index.js~WebSocketBridge.html#instance-method-stream",
-    "src/index.js~WebSocketBridge#stream",
-    "method"
   ]
 ]
