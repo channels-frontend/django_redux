@@ -7,7 +7,7 @@
     "transpile": "rm -rf lib && babel src --out-dir lib",
     "docs": "rm -rf docs && esdoc -c esdoc.json",
     "test": "jest",
-    "browserify": "browserify src/index.js -s channels -o ../django_redux/static/django_redux/js/websocketbridge.js",
+    "browserify": "browserify src/index.js -s channels_redux -o ../django_redux/static/django_redux/js/websocketbridge.js",
     "prepublish": "npm run transpile",
     "compile": "npm run transpile && npm run browserify"
   },
