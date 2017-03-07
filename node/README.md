@@ -1,42 +1,43 @@
 ### Usage
 
-Channels WebSocket wrapper.
+Channels Javascript wrapper for Redux.
 
 To process messages:
 
 ```
-import { WebSocketBridge } from 'django-channels'
+import { ReduxBridge } from 'django_redux';
+import { store } from './mystore';
 
-const webSocketBridge = new WebSocketBridge();
-webSocketBridge.connect();
-webSocketBridge.listen(function(action, stream) {
-  console.log(action, stream);
-});
+const reduxBridge = new ReduxBridge();
+reduxBridge.connect();
+reduxBridge.listen(store);
 ```
 
 To send messages:
 
 ```
-webSocketBridge.send({prop1: 'value1', prop2: 'value1'});
+reduxBridge.send({prop1: 'value1', prop2: 'value1'});
 
 ```
 
 To demultiplex specific streams:
 
 ```
-const webSocketBridge = new WebSocketBridge();
-webSocketBridge.connect();
-webSocketBridge.listen();
-webSocketBridge.demultiplex('mystream', function(action, stream) {
+const reduxBridge = new ReduxBridge();
+reduxBridge.connect();
+reduxBridge.listen(store);
+reduxBridge.demultiplex('mystream', function(store, action, stream) {
   console.log(action, stream);
+  store.dispatch(action);
 });
-webSocketBridge.demultiplex('myotherstream', function(action, stream) {
+reduxBridge.demultiplex('myotherstream', function(store, action, stream) {
   console.info(action, stream);
+  store.dispatch(action);
 });
 ```
 
 To send a message to a specific stream:
 
 ```
-webSocketBridge.stream('mystream').send({prop1: 'value1', prop2: 'value1'})
+reduxBridge.stream('mystream').send({prop1: 'value1', prop2: 'value1'})
 ```

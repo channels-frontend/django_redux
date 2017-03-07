@@ -17,7 +17,7 @@
   "author": "Flavio Curella",
   "license": "MIT",
   "dependencies": {
-    "reconnecting-websocket": "^3.0.3"
+    "django-channels": "^0.0.1"
   },
   "jest": {
     "roots": [

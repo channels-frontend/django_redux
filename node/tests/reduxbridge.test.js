@@ -1,9 +1,9 @@
-import { WebSocket, Server, SocketIO } from 'mock-socket';
-import { WebSocketBridge } from '../src/';
+import { WebSocket, Server } from 'mock-socket';
+import { ReduxBridge } from '../src/';
 
 
 
-describe('WebSocketBridge', () => {
+describe('ReduxBridge', () => {
   const mockServer = new Server('ws://localhost');
   const serverReceivedMessage = jest.fn();
   mockServer.on('message', serverReceivedMessage);
@@ -13,44 +13,50 @@ describe('WebSocketBridge', () => {
   });
 
   it('Connects', () => {
-    const webSocketBridge = new WebSocketBridge();
-    webSocketBridge.connect('ws://localhost');
+    const reduxBridge = new ReduxBridge();
+    reduxBridge.connect('ws://localhost');
   });
   it('Processes messages', () => {
-    const webSocketBridge = new WebSocketBridge();
-    const myMock = jest.fn();
-
-    webSocketBridge.connect('ws://localhost');
-    webSocketBridge.listen(myMock);
+    const reduxBridge = new ReduxBridge();
+    const store = {
+      dispatch: jest.fn(),
+    }
+    reduxBridge.connect('ws://localhost');
+    reduxBridge.listen(store);
 
     mockServer.send('{"type": "test", "payload": "message 1"}');
     mockServer.send('{"type": "test", "payload": "message 2"}');
 
-    expect(myMock.mock.calls.length).toBe(2);
-    expect(myMock.mock.calls[0][0]).toEqual({"type": "test", "payload": "message 1"});
-    expect(myMock.mock.calls[0][1]).toBe(null);
+    expect(store.dispatch.mock.calls.length).toBe(2);
+    expect(store.dispatch.mock.calls[0][0]).toEqual({"type": "test", "payload": "message 1"});
   });
   it('Ignores multiplexed messages for unregistered streams', () => {
-    const webSocketBridge = new WebSocketBridge();
-    const myMock = jest.fn();
+    const reduxBridge = new ReduxBridge();
+    const store = {
+      dispatch: jest.fn(),
+    }
 
-    webSocketBridge.connect('ws://localhost');
-    webSocketBridge.listen(myMock);
+    reduxBridge.connect('ws://localhost');
+    reduxBridge.listen(store);
 
     mockServer.send('{"stream": "stream1", "payload": {"type": "test", "payload": "message 1"}}');
-    expect(myMock.mock.calls.length).toBe(0);
+    expect(store.dispatch.mock.calls.length).toBe(0);
 
   });
   it('Demultiplexes messages only when they have a stream', () => {
-    const webSocketBridge = new WebSocketBridge();
+    const reduxBridge = new ReduxBridge();
     const myMock = jest.fn();
     const myMock2 = jest.fn();
     const myMock3 = jest.fn();
 
-    webSocketBridge.connect('ws://localhost');
-    webSocketBridge.listen(myMock);
-    webSocketBridge.demultiplex('stream1', myMock2);
-    webSocketBridge.demultiplex('stream2', myMock3);
+    const store = {
+      dispatch: myMock,
+    }
+
+    reduxBridge.connect('ws://localhost');
+    reduxBridge.listen(store);
+    reduxBridge.demultiplex('stream1', myMock2);
+    reduxBridge.demultiplex('stream2', myMock3);
 
     mockServer.send('{"type": "test", "payload": "message 1"}');
     expect(myMock.mock.calls.length).toBe(1);
@@ -63,8 +69,9 @@ describe('WebSocketBridge', () => {
     expect(myMock2.mock.calls.length).toBe(1);
     expect(myMock3.mock.calls.length).toBe(0);
 
-    expect(myMock2.mock.calls[0][0]).toEqual({"type": "test", "payload": "message 1"});
-    expect(myMock2.mock.calls[0][1]).toBe("stream1");
+    expect(myMock2.mock.calls[0][0]).toEqual(store);
+    expect(myMock2.mock.calls[0][1]).toEqual({"type": "test", "payload": "message 1"});
+    expect(myMock2.mock.calls[0][2]).toBe("stream1");
 
     mockServer.send('{"stream": "stream2", "payload": {"type": "test", "payload": "message 2"}}');
 
@@ -72,19 +79,24 @@ describe('WebSocketBridge', () => {
     expect(myMock2.mock.calls.length).toBe(1);
     expect(myMock3.mock.calls.length).toBe(1);
 
-    expect(myMock3.mock.calls[0][0]).toEqual({"type": "test", "payload": "message 2"});
-    expect(myMock3.mock.calls[0][1]).toBe("stream2");
+    expect(myMock3.mock.calls[0][0]).toEqual(store);
+    expect(myMock3.mock.calls[0][1]).toEqual({"type": "test", "payload": "message 2"});
+    expect(myMock3.mock.calls[0][2]).toBe("stream2");
   });
   it('Demultiplexes messages', () => {
-    const webSocketBridge = new WebSocketBridge();
+    const reduxBridge = new ReduxBridge();
     const myMock = jest.fn();
     const myMock2 = jest.fn();
 
-    webSocketBridge.connect('ws://localhost');
-    webSocketBridge.listen();
+    const store = {
+      dispatch: jest.fn(),
+    }
 
-    webSocketBridge.demultiplex('stream1', myMock);
-    webSocketBridge.demultiplex('stream2', myMock2);
+    reduxBridge.connect('ws://localhost');
+    reduxBridge.listen(store);
+
+    reduxBridge.demultiplex('stream1', myMock);
+    reduxBridge.demultiplex('stream2', myMock2);
 
     mockServer.send('{"type": "test", "payload": "message 1"}');
     mockServer.send('{"type": "test", "payload": "message 2"}');
@@ -98,33 +110,34 @@ describe('WebSocketBridge', () => {
 
     expect(myMock2.mock.calls.length).toBe(0);
 
-    expect(myMock.mock.calls[0][0]).toEqual({"type": "test", "payload": "message 1"});
-    expect(myMock.mock.calls[0][1]).toBe("stream1");
+    expect(myMock.mock.calls[0][0]).toEqual(store);
+    expect(myMock.mock.calls[0][1]).toEqual({"type": "test", "payload": "message 1"});
+    expect(myMock.mock.calls[0][2]).toBe("stream1");
 
     mockServer.send('{"stream": "stream2", "payload": {"type": "test", "payload": "message 2"}}');
 
     expect(myMock.mock.calls.length).toBe(1);
     expect(myMock2.mock.calls.length).toBe(1);
 
-
-    expect(myMock2.mock.calls[0][0]).toEqual({"type": "test", "payload": "message 2"});
-    expect(myMock2.mock.calls[0][1]).toBe("stream2");
+    expect(myMock2.mock.calls[0][0]).toEqual(store);
+    expect(myMock2.mock.calls[0][1]).toEqual({"type": "test", "payload": "message 2"});
+    expect(myMock2.mock.calls[0][2]).toBe("stream2");
 
   });
   it('Sends messages', () => {
-    const webSocketBridge = new WebSocketBridge();
+    const reduxBridge = new ReduxBridge();
 
-    webSocketBridge.connect('ws://localhost');
-    webSocketBridge.send({"type": "test", "payload": "message 1"});
+    reduxBridge.connect('ws://localhost');
+    reduxBridge.send({"type": "test", "payload": "message 1"});
 
     expect(serverReceivedMessage.mock.calls.length).toBe(1);
     expect(serverReceivedMessage.mock.calls[0][0]).toEqual(JSON.stringify({"type": "test", "payload": "message 1"}));
   });
   it('Multiplexes messages', () => {
-    const webSocketBridge = new WebSocketBridge();
+    const reduxBridge = new ReduxBridge();
 
-    webSocketBridge.connect('ws://localhost');
-    webSocketBridge.stream('stream1').send({"type": "test", "payload": "message 1"});
+    reduxBridge.connect('ws://localhost');
+    reduxBridge.stream('stream1').send({"type": "test", "payload": "message 1"});
 
     expect(serverReceivedMessage.mock.calls.length).toBe(1);
     expect(serverReceivedMessage.mock.calls[0][0]).toEqual(JSON.stringify({
