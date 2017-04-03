@@ -1,13 +1,13 @@
 {
   "name": "django_redux",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
     "transpile": "rm -rf lib && babel src --out-dir lib",
     "docs": "rm -rf docs && esdoc -c esdoc.json",
     "test": "jest",
-    "browserify": "browserify src/index.js -s channels -o ../django_redux/static/django_redux/js/websocketbridge.js",
+    "browserify": "browserify src/index.js -s channels_redux -o ../django_redux/static/django_redux/js/websocketbridge.js",
     "prepublish": "npm run transpile",
     "compile": "npm run transpile && npm run browserify"
   },
@@ -17,7 +17,7 @@
   "author": "Flavio Curella",
   "license": "MIT",
   "dependencies": {
-    "django-channels": "^0.0.1"
+    "django-channels": "^1.1.2"
   },
   "jest": {
     "roots": [
@@ -59,20 +59,7 @@
     "eslint-plugin-import": "^1.9.2",
     "eslint-plugin-jsx-a11y": "^1.5.3",
     "eslint-plugin-react": "^5.2.2",
-    "html-loader": "^0.4.3",
     "jest": "^19.0.1",
-    "json-loader": "^0.5.4",
-    "markdown-loader": "^0.1.7",
-    "mock-socket": "^6.0.4",
-    "react": "^15.4.0",
-    "react-cookie": "^0.4.8",
-    "react-dom": "^15.4.0",
-    "react-redux": "^4.4.6",
-    "redux": "^3.6.0",
-    "redux-actions": "^1.0.0",
-    "redux-logger": "^2.7.4",
-    "redux-thunk": "^2.1.0",
-    "webpack": "^2.2.1",
-    "webpack-bundle-tracker": "0.0.113"
+    "mock-socket": "^6.0.4"
   }
 }
