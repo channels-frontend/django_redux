@@ -1,16 +1,7 @@
 import { WebSocketBridge } from 'django-channels';
 
 
-const noop = (...args) => {};
-
 export class ReduxBridge extends WebSocketBridge {
-  constructor(options) {
-    options = Object.assign({}, {
-      onreconnect: noop,
-    }, options);
-    super(options);
-  }
-
   /**
    * Starts listening for messages on the websocket, demultiplexing if necessary.
    *
@@ -26,7 +17,7 @@ export class ReduxBridge extends WebSocketBridge {
    */
   listen(store, cb = this.storeDispatch) {
     this.default_cb = cb;
-    this._socket.onmessage = (event) => {
+    this.socket.onmessage = (event) => {
       const msg = JSON.parse(event.data);
       let action;
       let stream;
@@ -42,7 +33,7 @@ export class ReduxBridge extends WebSocketBridge {
       }
     };
 
-    this._socket.onopen = () => {
+    this.socket.onopen = () => {
       const state = store.getState();
 
       if (state.currentUser !== null) {
@@ -50,7 +41,6 @@ export class ReduxBridge extends WebSocketBridge {
         this.options.onreconnect(state);
       }
     };
-
   }
 
   storeDispatch(store, action, stream) {

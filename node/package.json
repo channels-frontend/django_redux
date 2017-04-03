@@ -17,7 +17,7 @@
   "author": "Flavio Curella",
   "license": "MIT",
   "dependencies": {
-    "django-channels": "^0.0.1"
+    "django-channels": "^1.1.2"
   },
   "jest": {
     "roots": [
