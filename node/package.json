@@ -1,6 +1,6 @@
 {
   "name": "django_redux",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -20,7 +20,7 @@
   "author": "Flavio Curella",
   "license": "MIT",
   "dependencies": {
-    "django-channels": "^1.1.2"
+    "django-channels": "^1.1.5"
   },
   "jest": {
     "roots": [

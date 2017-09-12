@@ -26,5 +26,5 @@ install:
   - pip install -q $DJANGO
   - nvm install 7
 script:
-  - PYTHONPATH=.:example py.test tests/
+  - DJANGO_SETTINGS_MODULE=tests.settings PYTHONPATH=.:example py.test tests/
   - cd node && npm install --progress=false && npm test

@@ -1,8 +1,8 @@
 window.esdocSearchIndex = [
   [
-    "django_redux/lib/index~reduxbridge",
+    "django_redux/src/index.js~reduxbridge",
     "variable/index.html#static-variable-reduxBridge",
-    "<span>reduxBridge</span> <span class=\"search-result-import-path\">django_redux/lib/index</span>",
+    "<span>reduxBridge</span> <span class=\"search-result-import-path\">django_redux/src/index.js</span>",
     "variable"
   ],
   [

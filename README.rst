@@ -11,7 +11,9 @@ Quickstart
     $ pip install django_redux
     $ npm install django_redux
 
-Create a file called `engine.py` for your project::
+Create a file called `engine.py` for your project:
+
+.. code-block:: python
 
     from django_redux import action, ReduxConsumer
 
@@ -33,7 +35,9 @@ Create a file called `engine.py` for your project::
         def incr_counter(self, message):
             self.group_send('broadcast', {'type': 'INCREMENTED_COUNTER', 'incrementBy': message['incrementBy']})
 
-Create a file called `routing.py` for your project::
+Create a file called `routing.py` for your project:
+
+.. code-block:: python
 
     from channels.routing import route_class
     from .consumers import MyConsumer
@@ -42,7 +46,9 @@ Create a file called `routing.py` for your project::
         route_class(MyConsumer),
     ]
 
-in your settings::
+in your settings:
+
+.. code-block:: python
 
     CHANNEL_LAYERS = {
         'default': {
@@ -54,7 +60,9 @@ in your settings::
         },
     }
 
-In your js entry point::
+In your js entry point:
+
+.. code-block:: javascript
 
     import React from 'react';
 
@@ -82,7 +90,9 @@ In your js entry point::
       document.getElementById('root')
     );
 
-To send an action from redux::
+To send an action from redux:
+
+.. code-block:: javascript
 
     import { createAction } from 'redux-actions';
 
@@ -97,7 +107,9 @@ To send an action from redux::
       });
     });
 
-To send an action from channels::
+To send an action from channels:
+
+.. code-block:: python
 
     from django_redux import send_action
 
@@ -106,7 +118,19 @@ To send an action from channels::
         'payload': {'any': 'thing'},
     })
 
-TODO:
+Options
+-------
+
+In addition to the options accepted by `reconnecting-websocket <https://github.com/pladaria/reconnecting-websocket#configure>`_, the ``ReduxBridge()`` constructor accepts the following options.
+
+``onreconnect: (dispatch, getState) => ()``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The function passed to ``onreconnect`` will be called when the websocket reconnects after being dropped. This is intended to provide you with a way to call some recovery logic.
+
+
+TODO
+----
 
 * Tests
     * ``send_action``

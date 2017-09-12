@@ -40,8 +40,6 @@ function _classCallCheck(instance, Constructor) {
   }
 }
 
-var noop = function noop() {};
-
 /**
  * Bridge between Channels and plain javascript.
  *
@@ -52,17 +50,19 @@ var noop = function noop() {};
  *   console.log(action, stream);
  * });
  */
-
 var WebSocketBridge = function () {
   function WebSocketBridge(options) {
     _classCallCheck(this, WebSocketBridge);
 
-    this._socket = null;
+    /**
+     * The underlaying `ReconnectingWebSocket` instance.
+     * 
+     * @type {ReconnectingWebSocket}
+     */
+    this.socket = null;
     this.streams = {};
     this.default_cb = null;
-    this.options = _extends({}, {
-      onopen: noop
-    }, options);
+    this.options = _extends({}, options);
   }
 
   /**
@@ -81,14 +81,20 @@ var WebSocketBridge = function () {
     key: 'connect',
     value: function connect(url, protocols, options) {
       var _url = void 0;
+      // Use wss:// if running on https://
+      var scheme = window.location.protocol === 'https:' ? 'wss' : 'ws';
+      var base_url = scheme + '://' + window.location.host;
       if (url === undefined) {
-        // Use wss:// if running on https://
-        var scheme = window.location.protocol === 'https:' ? 'wss' : 'ws';
-        _url = scheme + '://' + window.location.host + '/ws';
+        _url = base_url;
       } else {
-        _url = url;
+        // Support relative URLs
+        if (url[0] == '/') {
+          _url = '' + base_url + url;
+        } else {
+          _url = url;
+        }
       }
-      this._socket = new _reconnectingWebsocket2.default(_url, protocols, options);
+      this.socket = new _reconnectingWebsocket2.default(_url, protocols, options);
     }
 
     /**
@@ -111,7 +117,7 @@ var WebSocketBridge = function () {
       var _this = this;
 
       this.default_cb = cb;
-      this._socket.onmessage = function (event) {
+      this.socket.onmessage = function (event) {
         var msg = JSON.parse(event.data);
         var action = void 0;
         var stream = void 0;
@@ -127,8 +133,6 @@ var WebSocketBridge = function () {
           _this.default_cb ? _this.default_cb(action, stream) : null;
         }
       };
-
-      this._socket.onopen = this.options.onopen;
     }
 
     /**
@@ -162,16 +166,13 @@ var WebSocketBridge = function () {
      * @param      {Object}  msg     The message
      *
      * @example
-     * // We cheat by using the Redux-style Actions as our
-     * // communication protocol with the server. Consider separating
-     * // communication format from client-side action API.
-     * webSocketBridge.send({type: 'MYACTION', 'payload': 'somepayload'});
+     * webSocketBridge.send({prop1: 'value1', prop2: 'value1'});
      */
 
   }, {
     key: 'send',
     value: function send(msg) {
-      this._socket.send(JSON.stringify(msg));
+      this.socket.send(JSON.stringify(msg));
     }
 
     /**
@@ -180,10 +181,7 @@ var WebSocketBridge = function () {
      * @param      {String}  stream  The stream name
      * @return     {Object}  convenience object to send messages to `stream`.
      * @example
-     * // We cheat by using the Redux-style Actions as our
-     * // communication protocol with the server. Consider separating
-     * // communication format from client-side action API.
-     * webSocketBridge.stream('mystream').send({type: 'MYACTION', 'payload': 'somepayload'})
+     * webSocketBridge.stream('mystream').send({prop1: 'value1', prop2: 'value1'})
      */
 
   }, {
@@ -197,7 +195,7 @@ var WebSocketBridge = function () {
             stream: _stream,
             payload: action
           };
-          _this2._socket.send(JSON.stringify(msg));
+          _this2.socket.send(JSON.stringify(msg));
         }
       };
     }
@@ -279,7 +277,7 @@ var ReconnectingWebsocket = function (url, protocols, options) {
     var log = config.debug ? function () {
         var params = [];
         for (var _i = 0; _i < arguments.length; _i++) {
-            params[_i - 0] = arguments[_i];
+            params[_i] = arguments[_i];
         }
         return console.log.apply(console, ['RWS:'].concat(params));
     } : function () { };
@@ -320,6 +318,9 @@ var ReconnectingWebsocket = function (url, protocols, options) {
         }
     };
     var connect = function () {
+        if (!shouldRetry) {
+            return;
+        }
         log('connect');
         var oldWs = ws;
         ws = new config.constructor(url, protocols);
@@ -485,7 +486,7 @@ var ReduxBridge = exports.ReduxBridge = function (_WebSocketBridge) {
 
         if (state.currentUser !== null) {
           // the connection was dropped. Call the recovery logic
-          _this2.options.onreconnect(state);
+          _this2.options.onreconnect ? _this2.options.onreconnect(store.dispatch, store.getState) : null;
         }
       };
     }

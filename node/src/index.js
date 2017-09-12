@@ -38,7 +38,7 @@ export class ReduxBridge extends WebSocketBridge {
 
       if (state.currentUser !== null) {
         // the connection was dropped. Call the recovery logic
-        this.options.onreconnect(state);
+        this.options.onreconnect ? this.options.onreconnect(store.dispatch, store.getState) : null;
       }
     };
   }
