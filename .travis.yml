@@ -4,21 +4,12 @@ branches:
   only:
     - master
 python:
-  - 3.3
-  - 3.4
   - 3.5
   - 3.6
   - "pypy"
 env:
-  - DJANGO="Django>=1.8,<1.9"
-  - DJANGO="Django>=1.9,<1.10"
   - DJANGO="Django>=1.10,<1.11"
-matrix:
-  exclude:
-    - python: 3.3
-      env: DJANGO="Django>=1.9,<1.10"
-    - python: 3.3
-      env: DJANGO="Django>=1.10,<1.11"
+  - DJANGO="Django>=1.11,<2"
 install:
   - pip install -q -U pip
   - pip install -q -r tests/REQUIREMENTS.txt
