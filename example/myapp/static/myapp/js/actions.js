@@ -1,7 +1,7 @@
 import { createAction } from 'redux-actions';
 
 import ActionTypes from './constants';
-import { reduxBridge } from 'django_redux';
+import { reduxBridge } from './apps/index.react';
 
 
 export const incrementCounter = createAction(ActionTypes.INCREMENT_COUNTER, (incrementBy) => {

@@ -1,17 +1,19 @@
-from django_redux import action, ReduxConsumer
+from django_redux import action, AsyncReduxConsumer
 
 
-class MyConsumer(ReduxConsumer):
-
-    def connect(self, message, **kwargs):
-        if message.user.is_authenticated():
-            self.send({
+class MyConsumer(AsyncReduxConsumer):
+    async def connect(self):
+        await super().connect()
+        if self.user is not None and self.user.is_authenticated:
+            await self.send_json({
                 'type': 'SET_USER',
                 'user': {
-                    'username': self.message.user.username,
+                    'username': self.user.username,
                 }
             })
 
     @action('INCREMENT_COUNTER')
-    def incr_counter(self, message, **kwargs):
-        self.group_send('broadcast', {'type': 'INCREMENTED_COUNTER', 'payload': message['payload']})
+    async def incr_counter(self, message):
+        await self.broadcast({
+            'type': 'INCREMENTED_COUNTER', 'payload': message['payload']
+        })

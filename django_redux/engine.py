@@ -1,9 +1,7 @@
-import json
-
-from channels import Group
+from channels.layers import get_channel_layer
 
 
-def send_action(group_name, action):
+async def send_action(group_name, action):
     """
     Convenience method to dispatch redux actions from channels.
 
@@ -17,10 +15,17 @@ def send_action(group_name, action):
             }
         })
     """
+    channel_layer = get_channel_layer()
+
     data = {
-        'text': json.dumps(action),
+        'type': "redux.action",
+        'action': action,
     }
-    Group(group_name).send(data)
+
+    await channel_layer.group_send(
+        group_name,
+        data
+    )
 
 
 def action(action_type):

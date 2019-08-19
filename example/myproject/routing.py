@@ -1,6 +1,14 @@
-from channels.routing import route_class
+from django.conf.urls import url
+from channels.routing import ProtocolTypeRouter, URLRouter
+from channels.auth import AuthMiddlewareStack
+
 from .consumers import MyConsumer
 
-channel_routing = [
-    route_class(MyConsumer),
-]
+application = ProtocolTypeRouter({
+    "websocket": AuthMiddlewareStack(
+        URLRouter([
+            url(r"^ws/$", MyConsumer),
+        ])
+    ),
+
+})

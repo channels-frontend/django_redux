@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const Header = function Header(props) {
   const username = props.currentUser ? props.currentUser.username : 'Anonymous';
@@ -7,7 +8,7 @@ const Header = function Header(props) {
 
 
 Header.propTypes = {
-    currentUser: React.PropTypes.object
+    currentUser: PropTypes.object
 };
 
 export default Header;

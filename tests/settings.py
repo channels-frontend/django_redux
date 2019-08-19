@@ -40,7 +40,6 @@ INSTALLED_APPS = [
 
     'channels',
 
-    'myapp',
 ]
 
 MIDDLEWARE = [
@@ -132,9 +131,11 @@ LOGIN_REDIRECT_URL = '/'
 
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'asgiref.inmemory.ChannelLayer',
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
+            'hosts': [('localhost', 6379)],
         },
-        'ROUTING': 'tests.routing.channel_routing',
     },
 }
+
+ASGI_APPLICATION = 'tests.routing.application',

@@ -1,11 +1,9 @@
-{% load render_bundle from webpack_loader %}
 
 <html>
   <head>
   </head>
   <body>
     <div id="root"></div>
-    {% render_bundle 'common' 'js' %}
-    {% render_bundle 'index' 'js' %}
+    <script src="../../static/myapp/js/apps/index.react.js"></script>
   </body>
 </head>
