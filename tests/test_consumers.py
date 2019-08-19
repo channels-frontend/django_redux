@@ -1,48 +1,58 @@
-import json
-from channels.tests import ChannelTestCase, Client, apply_routes
-from .consumers import MyConsumer, Demultiplexer, spy
+import pytest
+
+from channels.testing import WebsocketCommunicator
+
+from .consumers import MyConsumer, Demultiplexer
+from .routing import application
 
 
-class ConsumerTest(ChannelTestCase):
+def test_consumer_action():
+    assert hasattr(MyConsumer.incr_counter, 'action_type')
+    assert MyConsumer.incr_counter.action_type == 'INCREMENT_COUNTER'
 
-    def test_consumer_action(self):
-        self.assertTrue(hasattr(MyConsumer.incr_counter, 'action_type'))
-        self.assertEqual(MyConsumer.incr_counter.action_type, 'INCREMENT_COUNTER')
 
-    def test_consumer(self):
-        client = Client()
-        with apply_routes([MyConsumer.as_route()]):
-            spy.reset_mock()
-            client.send_and_consume(u'websocket.connect', {'path': '/'})
-            client.send_and_consume(u'websocket.receive', {
-                'path': '/',
-                'text': json.dumps({
-                    'type': 'INCREMENT_COUNTER',
-                    'payload': 2,
-                }),
-            })
+@pytest.mark.asyncio
+async def test_consumer():
+    communicator = WebsocketCommunicator(application, "/ws/")
+    await communicator.connect()
+    await communicator.send_json_to({
+        'type': 'INCREMENT_COUNTER',
+        'payload': 2,
+    })
+    received = await communicator.receive_json_from()
+    assert received == {
+        'type': 'INCREMENTED_COUNTER',
+        'payload': 2,
+    }
+    await communicator.disconnect()
 
-            self.assertEqual(spy.call_count, 1)
-            self.assertEqual(client.receive(), {
-                'text': json.dumps({
-                    'type': 'INCREMENTED_COUNTER',
-                    'payload': 2,
-                }),
-            })
 
-    def test_multiplexer(self):
-        client = Client()
-        with apply_routes([Demultiplexer.as_route()]):
-            spy.reset_mock()
-            client.send_and_consume(u'websocket.connect', {'path': '/'})
-            client.send_and_consume(u'websocket.receive', {
-                'path': '/',
-                'text': json.dumps({
-                    'stream': 'redux',
-                    'payload': {
-                        'type': 'INCREMENT_COUNTER',
-                        'payload': 2,
-                    }
-                }),
-            })
-            self.assertEqual(spy.call_count, 1)
+@pytest.mark.asyncio
+async def test_consumer_no_auth():
+    communicator = WebsocketCommunicator(MyConsumer, "/")
+    await communicator.connect()
+    await communicator.send_json_to({
+        'type': 'INCREMENT_COUNTER',
+        'payload': 2,
+    })
+    received = await communicator.receive_json_from()
+    assert received == {
+        'type': 'INCREMENTED_COUNTER',
+        'payload': 2,
+    }
+    await communicator.disconnect()
+
+
+@pytest.mark.asyncio
+async def __test_multiplexer():
+    communicator = WebsocketCommunicator(Demultiplexer, "/")
+    await communicator.connect()
+    await communicator.send_json_to({
+        'stream': 'redux',
+        'payload': {
+            'type': 'INCREMENT_COUNTER',
+            'payload': 2,
+        }
+    })
+
+    await communicator.disconnect()

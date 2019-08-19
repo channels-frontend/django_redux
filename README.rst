@@ -9,18 +9,18 @@ Quickstart
 ::
 
     $ pip install django_redux
-    $ npm install django_redux
+    $ npm install django-channels django_redux
 
 Create a file called `engine.py` for your project::
 
-    from django_redux import action, ReduxConsumer
+    from django_redux import action, AsyncReduxConsumer
 
 
-    class MyConsumer(ReduxConsumer):
+    class MyConsumer(AsyncReduxConsumer):
 
-        def connect(self, message, **kwargs):
-            if message.user.is_authenticated():
-                self.send({
+        async def connect(self, message):
+            if message.user.is_authenticated:
+                await self.send_json({
                     'type': 'SET_USER',
                     'user': {
                         'username': self.message.user.username,
@@ -30,31 +30,13 @@ Create a file called `engine.py` for your project::
         # This method will be called when the `INCREMENT_COUNTER` action gets
         # fired from the JS via the reduxBridge (see below).
         @action('INCREMENT_COUNTER')
-        def incr_counter(self, message):
-            self.group_send('broadcast', {'type': 'INCREMENTED_COUNTER', 'incrementBy': message['incrementBy']})
+        async def incr_counter(self, message):
+            await self.send_json({'type': 'INCREMENTED_COUNTER', 'incrementBy': message['incrementBy']})
 
-Create a file called `routing.py` for your project::
-
-    from channels.routing import route_class
-    from .consumers import MyConsumer
-
-    channel_routing = [
-        route_class(MyConsumer),
-    ]
-
-in your settings::
-
-    CHANNEL_LAYERS = {
-        'default': {
-            'BACKEND': 'asgi_redis.RedisChannelLayer',
-            'CONFIG': {
-                'hosts': [('localhost', 6379)],
-            },
-            'ROUTING': 'myproject.routing.channel_routing',
-        },
-    }
 
 In your js entry point::
+
+    // app.js
 
     import React from 'react';
 
@@ -65,15 +47,17 @@ In your js entry point::
     import reducer from '../reducers';
     import Root from '../containers/Root.react';
 
-    import { reduxBridge } from 'django_redux';
+    import { WebSocketBridge } from 'django-channels';
+    import { eventToAction } from 'django_redux';
 
     const store = createStore(
       reducer,
     );
 
 
-    reduxBridge.connect();
-    reduxBridge.listen(store);
+    export const reduxBridge = new WebSocketBridge();
+    reduxBridge.connect("ws://localhost:8000/ws/");
+    reduxBridge.addEventListener("message", eventToAction(store));
 
     render(
       <Provider store={store}>
@@ -87,7 +71,7 @@ To send an action from redux::
     import { createAction } from 'redux-actions';
 
     import ActionTypes from './constants';
-    import { reduxBridge } from 'django_redux';
+    import { reduxBridge } from './app';
 
 
     export const incrementCounter = createAction(ActionTypes.INCREMENT_COUNTER, (incrementBy) => {
@@ -97,14 +81,21 @@ To send an action from redux::
       });
     });
 
-To send an action from channels::
+To send an action from the backend::
 
     from django_redux import send_action
 
-    send_action('mygroup', {
+    await send_action('mygroup', {
         'type': 'ACTION_NAME',
         'payload': {'any': 'thing'},
     })
+
+Groups
+------
+
+All clients are automatically added to a group called `"broadcast"`.
+
+Authenticated users are automatically added to a group called `"user.{user.pk}"` so you they can be conveniently addressed.
 
 TODO:
 
@@ -112,7 +103,6 @@ TODO:
     * ``send_action``
 * Data binding
 * Docs
-    * ``ReduxConsumer.get_control_channel``
     * Multiplexing
 
 Credits
