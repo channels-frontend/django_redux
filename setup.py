@@ -13,9 +13,9 @@ setup(
     version=VERSION,
     description='A re-usable bridge between Django channels and Redux Edit',
     long_description=readme,
-    author='',
-    author_email='',
-    url='',
+    author='Flavio Curella',
+    author_email='flavio.curella@gmail.com',
+    url='https://github.com/channels-frontend/django_redux',
     include_package_data=True,
     packages=find_packages(exclude=['example', 'tests']),
     zip_safe=False,
@@ -33,8 +33,9 @@ setup(
         "Django",
     ],
     setup_requires=[
-        "mock",
+        "channels-redis",
         "pytest-runner",
+        "pytest-asyncio",
         "pytest-django",
     ],
 )

@@ -1,5 +1,4 @@
 channels>=2,<3
-mock
 pytest-django
 pytest-asyncio
 channelsmultiplexer
