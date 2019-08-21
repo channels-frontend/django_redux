@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.5.5",
-    "django-channels": "^2.0.0"
+    "django-channels": "^2.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",
