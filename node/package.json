@@ -45,6 +45,6 @@
     "jest": "^24.8.0",
     "jest-websocket-mock": "^1.5.0",
     "mock-socket": "^8.1.1",
-    "parcel-bundler": "^1.12.3"
+    "parcel-bundler": "^1.12.4"
   }
 }
