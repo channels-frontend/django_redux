@@ -1,6 +1,6 @@
 asgi-redis==1.0.0
 channels==0.17.3
 channels-redis==2.4.0
-Django==1.11.28
+Django==1.11.29
 django-webpack-loader==0.4.1
 django_redux
