@@ -3,3 +3,4 @@ pytest-django
 pytest-asyncio
 channelsmultiplexer
 channels-redis
+attrs>=19.2.0
